@@ -75,7 +75,7 @@ describe(isAssumeRoleProfile.name, () => {
     expect(isAssumeRoleProfile({ ...getMockAssumeRoleProfile(), ...getMockSourceProfileKeyValues() })).toEqual(true);
   });
 
-  it("returns true for AssumeRoleWithProviderProfile", () => {
+  it("returns true for AssumeRoleWithCredentialSource", () => {
     expect(isAssumeRoleProfile({ ...getMockAssumeRoleProfile(), ...getMockProviderProfileKeyValues() })).toEqual(true);
   });
 });

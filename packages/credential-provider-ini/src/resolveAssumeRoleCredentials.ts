@@ -1,6 +1,6 @@
 import { CredentialsProviderError } from "@smithy/property-provider";
 import { getProfileName } from "@smithy/shared-ini-file-loader";
-import { AwsCredentialIdentity, Logger, ParsedIniData, Profile } from "@smithy/types";
+import { AwsCredentialIdentity, IniSection, Logger, ParsedIniData, Profile } from "@smithy/types";
 
 import { FromIniInit } from "./fromIni";
 import { resolveCredentialSource } from "./resolveCredentialSource";
@@ -46,12 +46,12 @@ export interface AssumeRoleParams {
   DurationSeconds?: number;
 }
 
-interface AssumeRoleWithSourceProfile extends Profile {
+interface AssumeRoleWithSourceProfile extends IniSection {
   role_arn: string;
   source_profile: string;
 }
 
-interface AssumeRoleWithProviderProfile extends Profile {
+interface AssumeRoleWithCredentialSource extends IniSection {
   role_arn: string;
   credential_source: string;
 }
@@ -88,12 +88,12 @@ const isAssumeRoleWithSourceProfile = (
 const isCredentialSourceProfile = (
   arg: any,
   { profile, logger }: { profile: string; logger?: Logger }
-): arg is AssumeRoleWithProviderProfile => {
-  const withProviderProfile = typeof arg.credential_source === "string" && typeof arg.source_profile === "undefined";
-  if (withProviderProfile) {
+): arg is AssumeRoleWithCredentialSource => {
+  const withCredentialSource = typeof arg.credential_source === "string" && typeof arg.source_profile === "undefined";
+  if (withCredentialSource) {
     logger?.debug?.(`    ${profile} isCredentialSourceProfile credential_source=${arg.credential_source}`);
   }
-  return withProviderProfile;
+  return withCredentialSource;
 };
 
 /**

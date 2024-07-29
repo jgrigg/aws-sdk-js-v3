@@ -21,7 +21,12 @@ export const resolveCredentialSource = (
       const { fromHttp } = await import("@aws-sdk/credential-provider-http");
       const { fromContainerMetadata } = await import("@smithy/credential-provider-imds");
       logger?.debug("@aws-sdk/credential-provider-ini - credential_source is EcsContainer");
-      return chain(fromHttp(options ?? {}), fromContainerMetadata(options));
+      try {
+        return fromHttp(options ?? {});
+      } catch (e) {
+        logger?.debug("@aws-sdk/credential-provider-ini - fromHttp failed, trying fromContainerMetadata");
+        return fromContainerMetadata(options);
+      }
     },
     Ec2InstanceMetadata: async (options?: CredentialProviderOptions) => {
       logger?.debug("@aws-sdk/credential-provider-ini - credential_source is Ec2InstanceMetadata");
